@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Timer and Stopwatch</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    div {
+      margin: 20px;
+    }
+
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    #display {
+      font-size: 36px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Timer and Stopwatch</h1>
+  <div>
+    <button id="timerBtn">Start Timer</button>
+    <button id="stopwatchBtn">Start Stopwatch</button>
+    <button id="pauseBtn" style="display: none;">Pause</button>
+  </div>
+  <div id="display">00:00:00:000</div>
+  <script>
+    let interval;
+    let mode = "timer";
+    let startTime = 0;
+    let paused = false;
+
+    const display = document.getElementById("display");
+    const timerBtn = document.getElementById("timerBtn");
+    const stopwatchBtn = document.getElementById("stopwatchBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+
+    function updateDisplay() {
+      if (!paused) {
+        const now = new Date().getTime();
+        let timeDifference = now - startTime;
+        const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        timeDifference %= 1000 * 60 * 60;
+        const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+        timeDifference %= 1000 * 60;
+        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+        const milliseconds = timeDifference % 1000;
+
+        const timeString = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}:${String(milliseconds).padStart(3, '0')}`;
+        display.innerHTML = timeString;
+      }
+    }
+
+    function startTimer() {
+      mode = "timer";
+      startTime = new Date().getTime();
+      interval = setInterval(updateDisplay, 1); // Update every millisecond
+      paused = false;
+    }
+
+    function startStopwatch() {
+      mode = "stopwatch";
+      startTime = new Date().getTime() - startTime;
+      interval = setInterval(updateDisplay, 1); // Update every millisecond
+      paused = false;
+    }
+
+    function pauseTimer() {
+      clearInterval(interval);
+      paused = true;
+    }
+
+    function clearTimer() {
+      clearInterval(interval);
+      display.innerHTML = "00:00:00:000";
+      paused = false;
+    }
+
+    timerBtn.addEventListener("click", () => {
+      clearTimer();
+      startTimer();
+      pauseBtn.style.display = "inline";
+    });
+
+    stopwatchBtn.addEventListener("click", () => {
+      clearTimer();
+      startStopwatch();
+      pauseBtn.style.display = "inline";
+    });
+
+    pauseBtn.addEventListener("click", () => {
+      pauseTimer();
+      pauseBtn.style.display = "none";
+    });
+  </script>
+</body>
+</html>
